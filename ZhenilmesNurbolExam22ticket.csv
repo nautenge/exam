@@ -1,0 +1,142 @@
+using System;
+using System.Collections.Generic;
+
+public class EmployeeProfile
+{
+    public string Name { get; set; }
+    public string Surname { get; set; }
+    public DateTime BirthDate { get; set; }
+    public string Email { get; set; }
+    public string Phone { get; set; }
+    public string Role { get; set; }
+    public string Department { get; set; }
+    public List<string> Permissions { get; set; } = new List<string>();
+    public List<string> Certifications { get; set; } = new List<string>();
+    public DateTime EmploymentDate { get; set; }
+}
+
+public class ProfileBuilder
+{
+    private EmployeeProfile _profile;
+
+    public ProfileBuilder()
+    {
+        _profile = new EmployeeProfile();
+    }
+
+    public ProfileBuilder SetPersonalInfo(string name, string surname, DateTime birthDate)
+    {
+        _profile.Name = name;
+        _profile.Surname = surname;
+        _profile.BirthDate = birthDate;
+        return this;
+    }
+
+    public ProfileBuilder SetContactInfo(string email, string phone)
+    {
+        _profile.Email = email;
+        _profile.Phone = phone;
+        return this;
+    }
+
+    public ProfileBuilder SetRole(string role)
+    {
+        _profile.Role = role;
+        return this;
+    }
+
+    public ProfileBuilder AssignDepartment(string department)
+    {
+        _profile.Department = department;
+        return this;
+    }
+
+    public ProfileBuilder GrantPermissions(List<string> permissions)
+    {
+        _profile.Permissions.AddRange(permissions);
+        return this;
+    }
+
+    public ProfileBuilder AddCertifications(List<string> certifications)
+    {
+        _profile.Certifications.AddRange(certifications);
+        return this;
+    }
+
+    public ProfileBuilder SetEmploymentDate(DateTime employmentDate)
+    {
+        _profile.EmploymentDate = employmentDate;
+        return this;
+    }
+
+    public EmployeeProfile Build()
+    {
+        return _profile;
+    }
+}
+
+public class ProfileTemplates
+{
+    public static ProfileBuilder GetManagerProfile()
+    {
+        return new ProfileBuilder()
+            .SetRole("Manager")
+            .AssignDepartment("Management")
+            .GrantPermissions(new List<string> { "AccessReports", "ManageTeam" })
+            .AddCertifications(new List<string> { "ProjectManagementCertification" });
+    }
+
+    public static ProfileBuilder GetDeveloperProfile()
+    {
+        return new ProfileBuilder()
+            .SetRole("Developer")
+            .AssignDepartment("Development")
+            .GrantPermissions(new List<string> { "AccessRepository", "AccessDocumentation" })
+            .AddCertifications(new List<string> { "CertifiedDeveloper" });
+    }
+
+    public static ProfileBuilder GetAdminProfile()
+    {
+        return new ProfileBuilder()
+            .SetRole("Administrator")
+            .AssignDepartment("IT")
+            .GrantPermissions(new List<string> { "AccessDatabase", "ManageServers", "AdminRights" })
+            .AddCertifications(new List<string> { "SystemAdminCertification", "NetworkAdminCertification" });
+    }
+}
+
+public class Program
+{
+    public static void Main()
+    {
+        var managerProfile = ProfileTemplates.GetManagerProfile()
+            .SetPersonalInfo("John", "Doe", new DateTime(1985, 5, 15))
+            .SetContactInfo("john.doe@example.com", "123-456-7890")
+            .SetEmploymentDate(new DateTime(2020, 1, 10))
+            .Build();
+
+        var developerProfile = ProfileTemplates.GetDeveloperProfile()
+            .SetPersonalInfo("Alice", "Smith", new DateTime(1990, 3, 22))
+            .SetContactInfo("alice.smith@example.com", "987-654-3210")
+            .SetEmploymentDate(new DateTime(2021, 6, 1))
+            .Build();
+
+        var adminProfile = ProfileTemplates.GetAdminProfile()
+            .SetPersonalInfo("Bob", "Johnson", new DateTime(1980, 11, 5))
+            .SetContactInfo("bob.johnson@example.com", "555-123-4567")
+            .SetEmploymentDate(new DateTime(2018, 9, 15))
+            .Build();
+ 
+        var profiles = new List<EmployeeProfile> { managerProfile, developerProfile, adminProfile };
+
+        foreach (var profile in profiles)
+        {
+            Console.WriteLine($"Name: {profile.Name} {profile.Surname}");
+            Console.WriteLine($"Role: {profile.Role}");
+            Console.WriteLine($"Department: {profile.Department}");
+            Console.WriteLine($"Permissions: {string.Join(", ", profile.Permissions)}");
+            Console.WriteLine($"Certifications: {string.Join(", ", profile.Certifications)}");
+            Console.WriteLine($"Employment Date: {profile.EmploymentDate.ToShortDateString()}\n");
+        }
+    }
+}
